@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Игра Кликер</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #1a1a1a;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        .game-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            max-width: 1200px;
+            max-height: 800px;
+            background-image: url('egg.png');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
+        }
+
+        /* Полоска мощности */
+        .progress-box {
+            width: 90%;
+            max-width: 600px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 3px solid #d4af37;
+            border-radius: 10px;
+            padding: 10px 20px;
+            text-align: center;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+        }
+
+        .progress-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ffd700;
+            margin-bottom: 8px;
+            text-shadow: 1px 1px 2px #000;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 20px;
+            background: #333;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #555;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #ff8c00, #ffd700);
+            transition: width 0.1s ease-out;
+        }
+
+        /* Кнопка */
+        .click-btn {
+            padding: 15px 30px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #fff;
+            background: linear-gradient(135deg, #8b4513, #5c2c0c);
+            border: 4px solid #d4af37;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.5);
+            transition: transform 0.1s ease, font-size 0.1s ease, background 0.2s;
+            margin-bottom: 50px;
+        }
+
+        .click-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Плеер диктофона */
+        .audio-player {
+            display: none;
+            background: rgba(0, 0, 0, 0.85);
+            border: 2px solid #ffd700;
+            border-radius: 12px;
+            padding: 15px 25px;
+            text-align: center;
+            margin-bottom: 30px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .audio-player p {
+            color: #ffd700;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <div class="progress-box">
+        <div class="progress-title" id="statusText">МОЩНОСТЬ: 0% (0/50 НАЖАТИЙ)</div>
+        <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="progressBar"></div>
+        </div>
+    </div>
+
+    <button class="click-btn" id="mainBtn">КОНЧАТЬ</button>
+
+    <div class="audio-player" id="audioContainer">
+        <p>У лерика один култахь</p>
+        <audio id="audioPlayer" controls>
+            <source src="voice.mp3" type="audio/mpeg">
+            Ваш браузер не поддерживает аудио.
+        </audio>
+    </div>
+</div>
+
+<script>
+    let clicks = 0;
+    const maxClicks = 50;
+    
+    const mainBtn = document.getElementById('mainBtn');
+    const progressBar = document.getElementById('progressBar');
+    const statusText = document.getElementById('statusText');
+    const audioContainer = document.getElementById('audioContainer');
+    const audioPlayer = document.getElementById('audioPlayer');
+
+    mainBtn.addEventListener('click', () => {
+        if (clicks < maxClicks) {
+            clicks++;
+            
+            // Расчет процента и обновление прогресс-бара
+            const percent = Math.floor((clicks / maxClicks) * 100);
+            progressBar.style.width = percent + '%';
+            statusText.innerText = `МОЩНОСТЬ: ${percent}% (${clicks}/${maxClicks} НАЖАТИЙ)`;
+            
+            // Увеличение размера кнопки с каждым кликом
+            const currentSize = 24 + (clicks * 0.6); // от 24px до 54px
+            const currentPaddingV = 15 + (clicks * 0.3);
+            const currentPaddingH = 30 + (clicks * 0.6);
+            
+            mainBtn.style.fontSize = currentSize + 'px';
+            mainBtn.style.padding = `${currentPaddingV}px ${currentPaddingH}px`;
+
+            // Финал
+            if (clicks === maxClicks) {
+                mainBtn.style.display = 'none';
+                statusText.innerText = 'МОЩНОСТЬ: 100% (ИГРА ЗАВЕРШЕНА!)';
+                audioContainer.style.display = 'block';
+                audioPlayer.play();
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
